@@ -103,43 +103,43 @@ public class Controller implements Initializable{
     private Button openVideoButton;
 
     @FXML
-    private void playMedia(ActionEvent event){
+    private void playMedia(){
         mediaPlayer.play();
         mediaPlayer.setRate(1);
     }
 
     @FXML
-    private void stopMedia(ActionEvent event){
+    private void stopMedia(){
         mediaPlayer.stop();
     }
 
     @FXML
-    private void pauseMedia(ActionEvent event){
+    private void pauseMedia(){
         mediaPlayer.pause();
     }
 
     @FXML
-    private void slowMedia(ActionEvent event){
+    private void slowMedia(){
         mediaPlayer.setRate(0.75);
     }
 
     @FXML
-    private void slow2Media(ActionEvent event){
+    private void slow2Media(){
         mediaPlayer.setRate(0.5);
     }
 
     @FXML
-    private void fastMedia(ActionEvent event){
+    private void fastMedia(){
         mediaPlayer.setRate(1.5);
     }
 
     @FXML
-    private void fast2Media(ActionEvent event){
+    private void fast2Media(){
         mediaPlayer.setRate(2);
     }
 
     @FXML
-    private void exitMedia(ActionEvent event){
+    private void exitMedia(){
         System.exit(0);
     }
 
@@ -150,7 +150,6 @@ public class Controller implements Initializable{
         FileChooser.ExtensionFilter filter = new FileChooser
                 .ExtensionFilter("Select file (.mp3), (.mp4), (.MOV)", "*.mp3", "*.mp4", "*.MOV");
         fileChooser.getExtensionFilters().add(filter);
-
         openVideoButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -166,16 +165,6 @@ public class Controller implements Initializable{
 
                     width.bind(Bindings.selectDouble(mediaView.sceneProperty(), "width"));
                     height.bind(Bindings.selectDouble(mediaView.sceneProperty(), "height"));
-
-                    volumeSlider.setValue(mediaPlayer.getVolume() * 100);
-                    volumeSlider.valueProperty().addListener(new InvalidationListener() {
-                        @Override
-                        public void invalidated(Observable observable) {
-                            mediaPlayer.setVolume(volumeSlider.getValue() / 100);
-                        }
-                    });
-
-
                     mediaPlayer.currentTimeProperty().addListener(new ChangeListener<Duration>() {
                         @Override
                         public void changed(ObservableValue<? extends Duration> observable, Duration oldValue, Duration newValue) {
@@ -185,19 +174,33 @@ public class Controller implements Initializable{
                         }
                     });
 
+                    mediaPlayer.setOnReady(new Runnable() {
+                        @Override
+                        public void run() {
+                            volumeSlider.setValue(mediaPlayer.getVolume() * 100);
+                            sceneSlider.setMax(mediaPlayer.getTotalDuration().toSeconds());
+                            addSliderListeners();
+                        }
+                    });
+
                     mediaPlayer.play();
                 }
             }
         });
 
-        sceneSlider.setOnMouseDragged(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent mouseEvent) {
-                mediaPlayer.seek(Duration.seconds(sceneSlider.getValue()));
-            }
-        });
 
+//
+//        // Additional code for continuous updating of slider during media playback
+//        if (mediaPlayer != null) {
+//            mediaPlayer.currentTimeProperty().addListener((observable, oldValue, newValue) -> {
+//                if (!sceneSlider.isValueChanging()) {
+//                    sceneSlider.setValue(newValue.toSeconds());
+//                }
+//            });
+//        }
+    }
 
+    private void addSliderListeners(){
         // Handle slider drag events
         sceneSlider.valueChangingProperty().addListener((observable, oldValue, isChanging) -> {
             if (!isChanging) {
@@ -205,14 +208,12 @@ public class Controller implements Initializable{
             }
         });
 
-        // Additional code for continuous updating of slider during media playback
-        if (mediaPlayer != null) {
-            mediaPlayer.currentTimeProperty().addListener((observable, oldValue, newValue) -> {
-                if (!sceneSlider.isValueChanging()) {
-                    sceneSlider.setValue(newValue.toSeconds());
-                }
-            });
-        }
+        volumeSlider.valueProperty().addListener(new InvalidationListener() {
+            @Override
+            public void invalidated(Observable observable) {
+                mediaPlayer.setVolume(volumeSlider.getValue() / 100);
+            }
+        });
     }
 
 
