@@ -10,6 +10,7 @@
 <?import javafx.scene.media.MediaView?>
 <?import javafx.scene.text.Font?>
 
+<?import javafx.scene.control.Label?>
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="458.0"
             prefWidth="600.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.example.demo2.Controller">
@@ -24,6 +25,11 @@
                         <Insets top="100.0"/>
                     </VBox.margin>
                 </Slider>
+                <Label fx:id="timeLabel" alignment="CENTER">
+                    <font>
+                        <Font name="Georgia" size="14.0"/>
+                    </font>
+                </Label>
                 <HBox alignment="CENTER" prefHeight="65.0" prefWidth="600.0">
                     <children>
                         <Slider fx:id="volumeSlider" prefHeight="14.0" prefWidth="70.0">
